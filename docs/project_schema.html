@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E‑Commerce Database Schema</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f7f7f7; }
+        header { background: #333; color: #fff; padding: 1rem 2rem; }
+        header h1 { margin: 0; font-size: 1.5rem; }
+        nav { background: #444; padding: 0.5rem 2rem; }
+        nav a { color: #fff; margin-right: 1rem; text-decoration: none; }
+        section { margin: 2rem; background: #fff; padding: 1.5rem; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h2 { border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { border: 1px solid #ddd; padding: 0.5rem; text-align: left; }
+        th { background: #f0f0f0; }
+        .relationship { font-style: italic; color: #555; margin-top: 0.5rem; }
+        .overview { margin-top: 1rem; font-size: 0.9rem; }
+        footer { text-align: center; padding: 1rem; font-size: 0.8rem; color: #666; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>E‑Commerce Database Schema</h1>
+    </header>
+    <nav>
+        <a href="#users">Users / Customers</a>
+        <a href="#products">Products & Variants</a>
+        <a href="#attributes">Attributes</a>
+        <a href="#cart">Cart</a>
+        <a href="#orders">Orders & Payments</a>
+        <a href="#extras">Extras</a>
+    </nav>
+
+    <section id="users">
+        <h2>1. Users / Customers</h2>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>email (unique)</td><td>Login identifier</td></tr>
+            <tr><td>password</td><td>Encrypted password (use Django's AbstractUser)</td></tr>
+            <tr><td>first_name</td><td>First name</td></tr>
+            <tr><td>last_name</td><td>Last name</td></tr>
+            <tr><td>phone</td><td>Contact number</td></tr>
+            <tr><td>is_active</td><td>Active flag</td></tr>
+            <tr><td>is_staff</td><td>Staff/admin flag</td></tr>
+            <tr><td>created_at</td><td>Timestamp</td></tr>
+            <tr><td>updated_at</td><td>Timestamp</td></tr>
+        </table>
+        <div class="relationship">User (1) ────< (Many) Addresses</div>
+        <h3>Addresses</h3>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>user_id (FK → users.id)</td><td>Owner</td></tr>
+            <tr><td>full_name</td><td>Recipient</td></tr>
+            <tr><td>phone</td><td>Contact</td></tr>
+            <tr><td>address_line_1</td><td>Main address</td></tr>
+            <tr><td>address_line_2</td><td>Optional extra</td></tr>
+            <tr><td>city</td><td>City</td></tr>
+            <tr><td>state</td><td>State/region</td></tr>
+            <tr><td>country</td><td>Country</td></tr>
+            <tr><td>postal_code</td><td>ZIP/Postal</td></tr>
+            <tr><td>is_default</td><td>Default flag</td></tr>
+            <tr><td>created_at</td><td>Timestamp</td></tr>
+        </table>
+    </section>
+
+    <section id="products">
+        <h2>2. Product Structure</h2>
+        <h3>Categories</h3>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>name</td><td>Category name</td></tr>
+            <tr><td>slug</td><td>URL-friendly</td></tr>
+            <tr><td>description</td><td>Optional</td></tr>
+            <tr><td>parent_id (FK → categories.id)</td><td>Subcategory (nullable)</td></tr>
+            <tr><td>created_at</td><td>Timestamp</td></tr>
+        </table>
+        <div class="relationship">Category (1) ────< (Many) Subcategories</div>
+
+        <h3>Products</h3>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>name</td><td>Product name</td></tr>
+            <tr><td>slug</td><td>URL-friendly</td></tr>
+            <tr><td>description</td><td>Product description</td></tr>
+            <tr><td>category_id (FK → categories.id)</td><td>Belongs to</td></tr>
+            <tr><td>brand</td><td>Brand name</td></tr>
+            <tr><td>is_active</td><td>Published flag</td></tr>
+            <tr><td>is_digital</td><td>Digital good?</td></tr>
+            <tr><td>created_at</td><td>Timestamp</td></tr>
+            <tr><td>updated_at</td><td>Timestamp</td></tr>
+        </table>
+        <div class="relationship">Category (1) ────< (Many) Products</div>
+
+        <h3>Product Images</h3>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>product_id (FK → products.id)</td><td>Related product</td></tr>
+            <tr><td>image</td><td>URL/path</td></tr>
+            <tr><td>alt_text</td><td>Alt description</td></tr>
+            <tr><td>is_thumbnail</td><td>Thumbnail flag</td></tr>
+            <tr><td>created_at</td><td>Timestamp</td></tr>
+        </table>
+        <div class="relationship">Product (1) ────< (Many) Images</div>
+
+        <h3>Product Variants</h3>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>product_id (FK → products.id)</td><td>Parent product</td></tr>
+            <tr><td>sku (unique)</td><td>Stock keeping unit</td></tr>
+            <tr><td>price</td><td>Sale price</td></tr>
+            <tr><td>compare_price</td><td>Original price</td></tr>
+            <tr><td>cost_price</td><td>Internal cost</td></tr>
+            <tr><td>stock_quantity</td><td>Inventory count</td></tr>
+            <tr><td>weight</td><td>Weight for shipping</td></tr>
+            <tr><td>is_active</td><td>Available flag</td></tr>
+            <tr><td>created_at</td><td>Timestamp</td></tr>
+        </table>
+        <div class="relationship">Product (1) ────< (Many) Variants</div>
+    </section>
+
+    <section id="attributes">
+        <h2>3. Attributes</h2>
+        <h3>Attributes</h3>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>name</td><td>Attribute name (e.g. Size, Color)</td></tr>
+        </table>
+        <div class="relationship">Attribute (1) ────< (Many) AttributeValues</div>
+
+        <h3>Attribute Values</h3>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>attribute_id (FK → attributes.id)</td><td>Related attribute</td></tr>
+            <tr><td>value</td><td>Value (e.g. M, L, Red)</td></tr>
+        </table>
+
+        <h3>Variant Attribute Values</h3>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>variant_id (FK → product_variants.id)</td><td>Variant</td></tr>
+            <tr><td>attribute_value_id (FK → attribute_values.id)</td><td>Value</td></tr>
+        </table>
+        <div class="relationship">Variant (Many) ────<───> (Many) AttributeValues</div>
+
+        <p class="overview">Example: T-shirt Variant → Size M + Color Red</p>
+    </section>
+
+    <section id="cart">
+        <h2>4. Cart System</h2>
+        <h3>Carts</h3>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>user_id (FK → users.id, nullable for guest)</td><td>Owner</td></tr>
+            <tr><td>created_at</td><td>Timestamp</td></tr>
+            <tr><td>updated_at</td><td>Timestamp</td></tr>
+        </table>
+
+        <h3>Cart Items</h3>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>cart_id (FK → carts.id)</td><td>Cart reference</td></tr>
+            <tr><td>variant_id (FK → product_variants.id)</td><td>Selected variant</td></tr>
+            <tr><td>quantity</td><td>Quantity</td></tr>
+            <tr><td>created_at</td><td>Timestamp</td></tr>
+        </table>
+        <div class="relationship">User (1) ────< Cart (1)</div>
+        <div class="relationship">Cart (1) ────< CartItems (Many)</div>
+        <div class="relationship">CartItem → ProductVariant</div>
+    </section>
+
+    <section id="orders">
+        <h2>5. Order System</h2>
+        <h3>Orders</h3>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>user_id (FK → users.id)</td><td>Customer</td></tr>
+            <tr><td>order_number (unique)</td><td>Public identifier</td></tr>
+            <tr><td>status</td><td>pending, paid, shipped, etc.</td></tr>
+            <tr><td>subtotal</td><td>Line total before fees</td></tr>
+            <tr><td>tax_amount</td><td>Tax total</td></tr>
+            <tr><td>shipping_fee</td><td>Shipping cost</td></tr>
+            <tr><td>discount_amount</td><td>Coupons/discounts</td></tr>
+            <tr><td>total_amount</td><td>Grand total</td></tr>
+            <tr><td>payment_status</td><td>paid/failed/etc.</td></tr>
+            <tr><td>payment_method</td><td>e.g. card, PayPal</td></tr>
+            <tr><td>shipping_address_id (FK → addresses.id)</td><td>Shipping</td></tr>
+            <tr><td>billing_address_id (FK → addresses.id)</td><td>Billing</td></tr>
+            <tr><td>created_at</td><td>Timestamp</td></tr>
+            <tr><td>updated_at</td><td>Timestamp</td></tr>
+        </table>
+        <div class="relationship">User (1) ────< (Many) Orders</div>
+
+        <h3>Order Items</h3>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>order_id (FK → orders.id)</td><td>Parent order</td></tr>
+            <tr><td>variant_id (FK → product_variants.id)</td><td>Ordered variant</td></tr>
+            <tr><td>product_name (snapshot)</td><td>At time of purchase</td></tr>
+            <tr><td>sku (snapshot)</td><td>At time of purchase</td></tr>
+            <tr><td>price (snapshot)</td><td>At time of purchase</td></tr>
+            <tr><td>quantity</td><td>Units purchased</td></tr>
+            <tr><td>total_price</td><td>price * quantity</td></tr>
+        </table>
+        <div class="relationship">Order (1) ────< (Many) OrderItems</div>
+    </section>
+
+    <section id="orders">
+        <h3>Payments</h3>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>order_id (FK → orders.id)</td><td>Related order</td></tr>
+            <tr><td>payment_reference</td><td>Gateway ref</td></tr>
+            <tr><td>payment_gateway</td><td>Provider name</td></tr>
+            <tr><td>amount</td><td>Paid amount</td></tr>
+            <tr><td>currency</td><td>Currency code</td></tr>
+            <tr><td>status</td><td>completed/failed</td></tr>
+            <tr><td>paid_at</td><td>Timestamp</td></tr>
+            <tr><td>created_at</td><td>Timestamp</td></tr>
+        </table>
+        <div class="relationship">Order (1) ────< (Many) Payments</div>
+    </section>
+
+    <section id="extras">
+        <h2>6. Optional Models</h2>
+        <h3>Reviews</h3>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>product_id (FK → products.id)</td><td>Reviewed product</td></tr>
+            <tr><td>user_id (FK → users.id)</td><td>Reviewer</td></tr>
+            <tr><td>rating (1–5)</td><td>Stars</td></tr>
+            <tr><td>comment</td><td>Text</td></tr>
+            <tr><td>created_at</td><td>Timestamp</td></tr>
+        </table>
+
+        <h3>Wishlists</h3>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>user_id (FK → users.id)</td><td>Owner</td></tr>
+            <tr><td>created_at</td><td>Timestamp</td></tr>
+        </table>
+
+        <h3>Wishlist Items</h3>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td>id (PK)</td><td>Primary key</td></tr>
+            <tr><td>wishlist_id (FK → wishlists.id)</td><td>Parent list</td></tr>
+            <tr><td>product_id (FK → products.id)</td><td>Product</td></tr>
+        </table>
+    </section>
+
+    <footer>
+        Generated: February 26, 2026
+    </footer>
+</body>
+</html>

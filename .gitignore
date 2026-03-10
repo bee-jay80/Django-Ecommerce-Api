@@ -1,0 +1,121 @@
+# Python-generated files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+wheels/
+*.egg-info/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# PyEnv
+.python-version
+
+# Virtual environments
+.venv/
+env/
+ENV/
+venv/
+.venv/*
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media
+staticfiles/
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# PEP 582; used by e.g. pythonbrew
+__pypackages__/
+
+# pyre type checker
+.pyre/
+
+# dotenv
+.env
+.env.*
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# JetBrains IDEs
+*.iml
+
+# Node
+node_modules/
+
+# Coverage
+.coverage
+
+# Other
+*.sqlite3
+
+# Ignore cloudinary local folder if any
+media/
+
+# local environment
+.env
+
+# logs
+logs/
+
+# compiled c files
+*.dll
+*.exe
+*.pyd
+
+# End of gitignore
