@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
 from rest_framework.exceptions import PermissionDenied
+import logging
 
 
 class CategoryListCreateView(generics.ListCreateAPIView):
@@ -47,6 +48,25 @@ class ProductImageListCreateView(generics.ListCreateAPIView):
     queryset = ProductImage.objects.all()
     serializer_class = ProductImageSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+        except Exception as e:
+            # Log the error for debugging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Image upload failed: {str(e)}")
+            
+            # Check if the error is related to network issues (e.g., Cloudinary upload failure)
+            error_message = str(e).lower()
+            if 'cloudinary' in error_message or 'maxretryerror' in error_message or 'nameresolutionerror' in error_message:
+                return Response(
+                    {"error": "Image upload failed due to network issues. Please check your internet connection and try again."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+            else:
+                # Re-raise other exceptions
+                raise
 
     # Only create if the user is an admin
     def perform_create(self, serializer):
