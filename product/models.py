@@ -7,6 +7,7 @@ class Categories(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, blank=True,  unique=True, help_text="URL-friendly version of the name")
+    parent = models.ForeignKey('self', related_name='subcategories', on_delete=models.SET_NULL, null=True, blank=True)
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -23,7 +24,7 @@ class Categories(models.Model):
 class Products(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True, help_text="URL-friendly version of the name")
+    slug = models.SlugField(max_length=255, blank=True, unique=True, help_text="URL-friendly version of the name")
     description = models.TextField(blank=True, null=True)
     category_id = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name="products")
     brand = models.CharField(max_length=255)
