@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'cloudinary_storage',
 
     'customer',
+    'product',
 
     'rest_framework',
     # simple jwt
@@ -158,16 +159,23 @@ DEFAULT_FROM_EMAIL = os.getenv("EMAIL", default=EMAIL_HOST_USER or "johbright081
 
 
 
-# Cloudinary config
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
+# # Cloudinary config
+# import cloudinary
+# import cloudinary.uploader
+# import cloudinary.api
 
-# Cloudinary Configuration
-CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME')
-CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY')
-CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET')
+# # Cloudinary Configuration
+# CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME')
+# CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY')
+# CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET')
 
-# Configure default file storage to Cloudinary
+# Cloudinary Credentials
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET')
+}
+
+# Set Cloudinary as the default storage for media files
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
