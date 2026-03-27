@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from .managers import CustomUserManager
 import uuid
-from cloudinary.models import CloudinaryField
 
 class Customer(AbstractBaseUser, PermissionsMixin):
     id =  models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -44,7 +43,7 @@ class Addresses(models.Model):
 
 class CustomerProfile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    image_url = CloudinaryField('image', blank=True, null=True)
+    image_url = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     customer = models.OneToOneField(Customer, on_delete=models.CASCADE, related_name='profile')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
